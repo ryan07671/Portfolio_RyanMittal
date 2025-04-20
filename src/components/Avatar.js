@@ -101,10 +101,6 @@ const Avatar = ({ mood = 'happy', message = '', onMoodChange }) => {
     if (onMoodChange) {
       onMoodChange(newMood);
     }
-    
-    if (window.playSound?.click) {
-      window.playSound.click();
-    }
   };
 
   // Handle clicks outside the mood selector

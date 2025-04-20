@@ -10,21 +10,21 @@ export default function Portfolio() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
+  // Sound state
+  const [soundMode, setSoundMode] = useState('silent'); // 'sound', 'vibrate', 'silent'
+
   // Context-aware states
   const [timeOfDay, setTimeOfDay] = useState(""); // morning, afternoon, evening, night
   const [userLocation, setUserLocation] = useState(null);
   const [weatherCondition, setWeatherCondition] = useState(null);
 
-  // Multimodal interaction states
-  const [audioEnabled, setAudioEnabled] = useState(false);
-  const [backgroundSound, setBackgroundSound] = useState(null);
-  const [gestureActive, setGestureActive] = useState(false);
-  const [hapticFeedback, setHapticFeedback] = useState(false);
-
   // Avatar and agent states
   const [showAvatar, setShowAvatar] = useState(true);
   const [avatarMood, setAvatarMood] = useState("happy"); // happy, thinking, surprised
   const [avatarMessage, setAvatarMessage] = useState("");
+
+  // Haptic feedback state
+  const [hapticFeedback, setHapticFeedback] = useState(false);
 
   const handleAvatarMoodChange = (newMood) => {
     setAvatarMood(newMood);
@@ -82,22 +82,22 @@ export default function Portfolio() {
   ]);
 
   const skills = [
-    { name: "Prompt Engineering", level: 90, icon: "🤖" },
-    { name: "Java", level: 80, icon: "☕" },
-    { name: "C++", level: 75, icon: "⚡" },
-    { name: "Python", level: 90, icon: "🐍" },
-    { name: "React", level: 85, icon: "⚛️" },
-    { name: "Git", level: 70, icon: "��" },
-    { name: "Figma", level: 80, icon: "🎨" },
-    { name: "VS Code", level: 85, icon: "💻" },
-    { name: "IntelliJ", level: 80, icon: "🔧" },
-    { name: "Photoshop", level: 75, icon: "🖼️" },
-    { name: "Windows", level: 90, icon: "🪟" },
-    { name: "Ubuntu", level: 85, icon: "��" },
-    { name: "WSL", level: 80, icon: "🔧" },
-    { name: "ChatGPT-4", level: 95, icon: "🤖" },
-    { name: "Claude", level: 90, icon: "🤖" },
-    { name: "Tabnine", level: 85, icon: "🤖" }
+    { name: "Prompt Engineering", image: "/images/skills/prompt-engineering.png" },
+    { name: "Java", image: "/images/skills/java.png" },
+    { name: "C++", image: "/images/skills/cpp.png" },
+    { name: "Python", image: "/images/skills/python.png" },
+    { name: "React", image: "/images/skills/react.png" },
+    { name: "Git", image: "/images/skills/git.png" },
+    { name: "Figma", image: "/images/skills/figma.png" },
+    { name: "VS Code", image: "/images/skills/vscode.png" },
+    { name: "IntelliJ", image: "/images/skills/intellij.png" },
+    { name: "Photoshop", image: "/images/skills/photoshop.png" },
+    { name: "Windows", image: "/images/skills/windows.png" },
+    { name: "Ubuntu", image: "/images/skills/ubuntu.png" },
+    { name: "WSL", image: "/images/skills/wsl.png" },
+    { name: "ChatGPT-4", image: "/images/skills/chatgpt.png" },
+    { name: "Claude", image: "/images/skills/claude.png" },
+    { name: "Tabnine", image: "/images/skills/tabnine.png" }
   ];
 
   const sections = [
@@ -110,8 +110,6 @@ export default function Portfolio() {
     "testimonials",
   ];
   const sectionRefs = useRef([]);
-
-  const [soundMode, setSoundMode] = useState('silent'); // 'sound', 'vibrate', 'silent'
 
   useEffect(() => {
     const handleScroll = () => {
@@ -140,12 +138,24 @@ export default function Portfolio() {
     }
   };
 
-  // Modify scrollToSection to include haptic and sound feedback
-  const scrollToSection = (section) => {
-    // Trigger sound and haptic feedback
-    if (audioEnabled && window.playSound) {
-      window.playSound.click();
+  // Sound toggle function
+  const toggleSoundMode = () => {
+    const modes = ['silent', 'sound', 'vibrate'];
+    const currentIndex = modes.indexOf(soundMode);
+    const nextIndex = (currentIndex + 1) % modes.length;
+    setSoundMode(modes[nextIndex]);
+    
+    // Test sound or vibration when changing modes
+    if (modes[nextIndex] === 'sound') {
+      window.playSound?.click();
+    } else if (modes[nextIndex] === 'vibrate' && navigator.vibrate) {
+      navigator.vibrate(50);
     }
+  };
+
+  // Modify scrollToSection to include haptic feedback
+  const scrollToSection = (section) => {
+    // Trigger haptic feedback
     triggerHapticFeedback();
     
     const index = sections.indexOf(section);
@@ -166,21 +176,21 @@ export default function Portfolio() {
       desc: "Built a high-fidelity frontend for a game using Figma. Designed a smooth, intuitive UI.",
       link: "https://github.com/Piyush23375/Angry_birds_sem3_vegapunk.git",
       tags: ["UI/UX", "Game Design", "Figma"],
-      image: "/api/placeholder/400/250",
+      image: "/images/projects/angry-birds.png", // Replace this path
     },
     {
       title: "Assembler",
       desc: "Created an assembler to translate assembly code into machine code. Applied core computer architecture concepts.",
       link: "https://github.com/rbhan29/co-project.git",
       tags: ["Systems", "Assembly", "Computer Architecture"],
-      image: "/api/placeholder/400/250",
+      image: "/images/projects/assembler.png", // Replace this path
     },
     {
       title: "Legal Lingo",
       desc: "Designed a chatbot UI with Figma for legal help, focused on accessibility and UX.",
       link: "https://www.figma.com/proto/A9EpcIydYY3uInvpAPx9mi/High-Fi-Design?node-id=33-2361",
       tags: ["Chatbot", "UI/UX", "Legal Tech"],
-      image: "/api/placeholder/400/250",
+      image: "/images/projects/legal-lingo.png", // Replace this path
     },
   ];
 
@@ -316,27 +326,12 @@ export default function Portfolio() {
     }
   }, []);
 
-  const toggleSoundMode = () => {
-    const modes = ['silent', 'sound', 'vibrate'];
-    const currentIndex = modes.indexOf(soundMode);
-    const nextIndex = (currentIndex + 1) % modes.length;
-    setSoundMode(modes[nextIndex]);
-    
-    // Test sound or vibration when changing modes
-    if (modes[nextIndex] === 'sound') {
-      window.playSound?.click();
-    } else if (modes[nextIndex] === 'vibrate' && navigator.vibrate) {
-      navigator.vibrate(50);
-    }
-  };
-
   // Add hover and click handlers to interactive elements
   useEffect(() => {
     const addInteractionHandlers = () => {
       const interactiveElements = document.querySelectorAll('button, a, .interactive');
       interactiveElements.forEach(element => {
-        element.addEventListener('mouseenter', () => window.playSound?.hover());
-        element.addEventListener('click', () => window.playSound?.click());
+        element.addEventListener('click', () => triggerHapticFeedback());
       });
     };
 
@@ -344,8 +339,7 @@ export default function Portfolio() {
     return () => {
       const interactiveElements = document.querySelectorAll('button, a, .interactive');
       interactiveElements.forEach(element => {
-        element.removeEventListener('mouseenter', () => window.playSound?.hover());
-        element.removeEventListener('click', () => window.playSound?.click());
+        element.removeEventListener('click', () => triggerHapticFeedback());
       });
     };
   }, []);
@@ -360,17 +354,6 @@ export default function Portfolio() {
         message={avatarMessage} 
         onMoodChange={handleAvatarMoodChange} 
       />
-      
-      {/* Sound mode toggle button */}
-      <button
-        onClick={toggleSoundMode}
-        onMouseEnter={() => window.playSound?.hover()}
-        className={`fixed top-4 right-4 p-3 rounded-full ${
-          darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'
-        } shadow-lg transition-all duration-300 hover:scale-110`}
-      >
-        {soundMode === 'sound' ? '🔊' : soundMode === 'vibrate' ? '📳' : '🔇'}
-      </button>
 
       {/* Add QR Code button in your navigation */}
       <button
@@ -420,25 +403,6 @@ export default function Portfolio() {
                 {darkMode ? "☀️" : "🌙"}
               </button>
               
-              {/* Audio Toggle Button */}
-              <button
-                onClick={() => {
-                  setAudioEnabled(!audioEnabled);
-                  if (!audioEnabled && window.playSound) {
-                    window.playSound.click();
-                  }
-                }}
-                className={`p-2 rounded-full ${
-                  darkMode
-                    ? "bg-gray-800 text-blue-400"
-                    : "bg-gray-200 text-gray-800"
-                }`}
-                aria-label={audioEnabled ? "Mute sounds" : "Enable sounds"}
-                title={audioEnabled ? "Mute sounds" : "Enable sounds"}
-              >
-                {audioEnabled ? "🔊" : "🔇"}
-              </button>
-              
               {/* Haptic Feedback Toggle - Only show on touch devices */}
               {('ontouchstart' in window || navigator.maxTouchPoints > 0) && (
                 <button
@@ -460,6 +424,20 @@ export default function Portfolio() {
                   {hapticFeedback ? "📳" : "📴"}
                 </button>
               )}
+
+              {/* Sound Mode Toggle */}
+              <button
+                onClick={toggleSoundMode}
+                className={`p-2 rounded-full ${
+                  darkMode
+                    ? "bg-gray-800 text-green-400"
+                    : "bg-gray-200 text-gray-800"
+                }`}
+                aria-label={`Current mode: ${soundMode}`}
+                title={`Current mode: ${soundMode}`}
+              >
+                {soundMode === 'sound' ? "🔊" : soundMode === 'vibrate' ? "📳" : "🔇"}
+              </button>
             </div>
 
             {/* Desktop Navigation */}
@@ -572,10 +550,7 @@ export default function Portfolio() {
                 };
                 setActiveUsers(prev => [...prev, newUser]);
                 
-                // Trigger haptic and sound feedback
-                if (audioEnabled && window.playSound) {
-                  window.playSound.click();
-                }
+                // Trigger haptic feedback
                 triggerHapticFeedback();
                 
                 // Remove user after some time
@@ -596,7 +571,7 @@ export default function Portfolio() {
         <div className="h-screen flex flex-col justify-center items-center pt-16 px-4 text-center">
           <div className="mb-6 overflow-hidden rounded-full w-40 h-40 mx-auto border-4 border-blue-500">
             <img
-              src="/api/placeholder/160/160"
+              src="\images\profile.png" // Replace this path
               alt="Ryan Mittal"
               className="w-full h-full object-cover"
             />
@@ -652,29 +627,11 @@ export default function Portfolio() {
       <SectionAnimation id="skills">
         <section className="max-w-5xl mx-auto py-20 px-4">
           <h2 className="text-3xl font-bold mb-8 text-center">My Skills</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {skills.map((skill) => (
-              <div key={skill.name} className="mb-4">
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">{skill.icon}</span>
-                    <span className="font-medium">{skill.name}</span>
-                  </div>
-                  <span>{skill.level}%</span>
-                </div>
-                <div
-                  className={`w-full h-3 rounded-full ${
-                    darkMode ? "bg-gray-700" : "bg-gray-200"
-                  }`}
-                >
-                  <div
-                    className="h-full rounded-full bg-blue-500"
-                    style={{
-                      width: `${skill.level}%`,
-                      transition: "width 1s ease-in-out",
-                    }}
-                  ></div>
-                </div>
+              <div key={skill.name} className="mb-4 flex flex-col items-center">
+                <img src={skill.image} alt={skill.name} className="w-16 h-16 object-contain mb-2" />
+                <span className="font-medium text-center">{skill.name}</span>
               </div>
             ))}
           </div>
@@ -1068,7 +1025,6 @@ export default function Portfolio() {
                   key={testimonial.id}
                   className={`p-6 rounded-lg shadow-md ${darkMode ? "bg-gray-900" : "bg-white"} transform hover:scale-105 transition-all duration-300`}
                   onClick={() => {
-                    if (audioEnabled && window.playSound) window.playSound.click();
                     triggerHapticFeedback();
                   }}
                 >
