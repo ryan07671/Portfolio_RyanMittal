@@ -3,15 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@react-three/drei": "^9.92.3",
-    "@react-three/fiber": "^8.15.12",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
+    "framer-motion": "^12.7.4",
     "howler": "^2.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-qr-code": "^2.0.15",
     "react-scripts": "5.0.1",
     "tailwindcss": "^3.3.0",
-    "three": "^0.158.0"
+    "three": "^0.175.0"
   },
   "scripts": {
     "start": "react-scripts start",

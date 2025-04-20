@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const Avatar = ({ mood = 'happy', message = '', onMoodChange }) => {
+const Avatar = ({ mood = 'happy', message = '', onMoodChange, darkMode = false }) => {
   const [position, setPosition] = useState({ x: 20, y: 260 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -37,17 +37,54 @@ const Avatar = ({ mood = 'happy', message = '', onMoodChange }) => {
   };
 
   const getMoodColor = () => {
-    switch (localMood) {
-      case 'happy':
-        return 'bg-yellow-400';
-      case 'thinking':
-        return 'bg-blue-400';
-      case 'surprised':
-        return 'bg-pink-400';
-      case 'excited':
-        return 'bg-purple-400';
-      default:
-        return 'bg-yellow-400';
+    // Different color schemes based on dark/light mode
+    if (darkMode) {
+      switch (localMood) {
+        case 'happy':
+          return 'bg-yellow-400';
+        case 'thinking':
+          return 'bg-blue-400';
+        case 'surprised':
+          return 'bg-pink-400';
+        case 'excited':
+          return 'bg-purple-400';
+        default:
+          return 'bg-yellow-400';
+      }
+    } else {
+      // More subtle colors for light mode
+      switch (localMood) {
+        case 'happy':
+          return 'bg-yellow-100 border-2 border-yellow-300';
+        case 'thinking':
+          return 'bg-blue-100 border-2 border-blue-300';
+        case 'surprised':
+          return 'bg-pink-100 border-2 border-pink-300';
+        case 'excited':
+          return 'bg-purple-100 border-2 border-purple-300';
+        default:
+          return 'bg-yellow-100 border-2 border-yellow-300';
+      }
+    }
+  };
+
+  const getMoodMessageStyle = () => {
+    if (darkMode) {
+      return 'bg-gray-800 text-white';
+    } else {
+      // More appealing light theme styling with accent color border
+      switch (localMood) {
+        case 'happy':
+          return 'bg-white border-2 border-yellow-300 text-gray-800';
+        case 'thinking':
+          return 'bg-white border-2 border-blue-300 text-gray-800';
+        case 'surprised':
+          return 'bg-white border-2 border-pink-300 text-gray-800';
+        case 'excited':
+          return 'bg-white border-2 border-purple-300 text-gray-800';
+        default:
+          return 'bg-white border-2 border-yellow-300 text-gray-800';
+      }
     }
   };
 
@@ -165,8 +202,9 @@ const Avatar = ({ mood = 'happy', message = '', onMoodChange }) => {
       <div className={`flex items-center space-x-3 p-3 rounded-full ${getMoodColor()} shadow-lg transform transition-all duration-300 hover:scale-110`}>
         <div className="text-4xl animate-bounce">{getMoodEmoji()}</div>
         {message && (
-          <div className="absolute bottom-full right-0 mb-2 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-            <p className="text-sm">{message}</p>
+          <div className={`absolute bottom-full right-0 mb-2 p-3 rounded-lg shadow-lg max-w-xs ${getMoodMessageStyle()}`}>
+            <p className="text-sm font-medium">{message}</p>
+            <div className="absolute bottom-0 right-4 transform translate-y-1/2 rotate-45 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 dark:bg-gray-800 dark:border-gray-700"></div>
           </div>
         )}
       </div>
@@ -174,20 +212,23 @@ const Avatar = ({ mood = 'happy', message = '', onMoodChange }) => {
       {showMoodSelector && (
         <div 
           ref={moodSelectorRef}
-          className="absolute top-full mt-2 left-0 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-2 z-50"
+          className={`absolute top-full mt-2 left-0 ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800 border border-gray-200'} rounded-lg shadow-lg p-3 z-50`}
         >
           <div className="text-center font-medium mb-2 text-sm">Change Mood</div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             {availableMoods.map((moodOption) => (
               <button
                 key={moodOption.name}
                 onClick={() => handleMoodSelect(moodOption.name)}
-                className={`p-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                  localMood === moodOption.name ? 'bg-blue-100 dark:bg-blue-900' : ''
+                className={`p-2 rounded-lg transition-colors ${
+                  darkMode 
+                    ? `hover:bg-gray-700 ${localMood === moodOption.name ? 'bg-blue-900' : ''}` 
+                    : `hover:bg-gray-100 ${localMood === moodOption.name ? 'bg-blue-50 border border-blue-200' : ''}`
                 }`}
                 title={moodOption.name}
               >
                 <span className="text-2xl">{moodOption.emoji}</span>
+                <span className="block text-xs mt-1 capitalize">{moodOption.name}</span>
               </button>
             ))}
           </div>

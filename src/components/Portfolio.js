@@ -3,6 +3,7 @@ import SoundManager from "./SoundManager";
 import QRCodeComponent from "./QRCode";
 import Project3DViewer from "./Project3DViewer";
 import Avatar from "./Avatar";
+import ProjectCard3D from "./ProjectCard3D";
 
 export default function Portfolio() {
   const [darkMode, setDarkMode] = useState(true);
@@ -201,8 +202,18 @@ export default function Portfolio() {
   });
   const [formErrors, setFormErrors] = useState({});
   const [formSubmitted, setFormSubmitted] = useState(false);
+  // Add contact form ref to maintain scroll position
+  const contactFormRef = useRef(null);
+  const contactSectionPos = useRef(null);
 
   const handleContactChange = (e) => {
+    e.preventDefault(); // Prevent default behavior
+    
+    // Store current scroll position when first interacting with contact form
+    if (contactSectionPos.current === null) {
+      contactSectionPos.current = window.scrollY;
+    }
+    
     setContactForm({
       ...contactForm,
       [e.target.name]: e.target.value,
@@ -213,6 +224,14 @@ export default function Portfolio() {
       setFormErrors({
         ...formErrors,
         [e.target.name]: null,
+      });
+    }
+    
+    // Ensure we stay at the same scroll position
+    if (contactSectionPos.current !== null) {
+      window.scrollTo({
+        top: contactSectionPos.current,
+        behavior: 'auto'
       });
     }
   };
@@ -299,8 +318,8 @@ export default function Portfolio() {
       <div
         ref={sectionRef}
         id={id}
-        className={`transition-all duration-1000 ${
-          visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        className={`transition-opacity duration-1000 ${
+          visible ? "opacity-100" : "opacity-0"
         }`}
       >
         {children}
@@ -353,6 +372,7 @@ export default function Portfolio() {
         mood={avatarMood} 
         message={avatarMessage} 
         onMoodChange={handleAvatarMoodChange} 
+        darkMode={darkMode}
       />
 
       {/* Add QR Code button in your navigation */}
@@ -640,49 +660,17 @@ export default function Portfolio() {
 
       {/* Projects Section */}
       <SectionAnimation id="projects">
-        <section
-          className={`py-20 px-4 ${darkMode ? "bg-gray-800" : "bg-gray-100"}`}
-        >
+        <section className={`py-20 px-4 ${darkMode ? "bg-gray-800" : "bg-gray-100"}`}>
           <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl font-bold mb-8 text-center">Projects</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {projects.map((project, idx) => (
-                <div
-                  key={idx}
-                  className={`rounded-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                    darkMode ? "bg-gray-900" : "bg-white"
-                  }`}
-                >
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                    <p className="mb-4 text-sm">{project.desc}</p>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className={`px-2 py-1 text-xs rounded ${
-                            darkMode ? "bg-gray-800" : "bg-gray-200"
-                          }`}
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    <a
-                      href={project.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block w-full text-center py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                    >
-                      View Project
-                    </a>
-                  </div>
-                </div>
+                <ProjectCard3D 
+                  key={idx} 
+                  project={project} 
+                  darkMode={darkMode} 
+                  onView3D={(modelUrl) => setProject3DView(modelUrl)}
+                />
               ))}
             </div>
           </div>
@@ -941,6 +929,11 @@ export default function Portfolio() {
                         name="name"
                         value={contactForm.name}
                         onChange={handleContactChange}
+                        onFocus={() => {
+                          if (contactSectionPos.current === null) {
+                            contactSectionPos.current = window.scrollY;
+                          }
+                        }}
                         className={`w-full p-3 rounded-lg ${
                           darkMode
                             ? "bg-gray-800 border-gray-700"
@@ -963,6 +956,11 @@ export default function Portfolio() {
                         name="email"
                         value={contactForm.email}
                         onChange={handleContactChange}
+                        onFocus={() => {
+                          if (contactSectionPos.current === null) {
+                            contactSectionPos.current = window.scrollY;
+                          }
+                        }}
                         className={`w-full p-3 rounded-lg ${
                           darkMode
                             ? "bg-gray-800 border-gray-700"
@@ -988,6 +986,11 @@ export default function Portfolio() {
                         rows="4"
                         value={contactForm.message}
                         onChange={handleContactChange}
+                        onFocus={() => {
+                          if (contactSectionPos.current === null) {
+                            contactSectionPos.current = window.scrollY;
+                          }
+                        }}
                         className={`w-full p-3 rounded-lg ${
                           darkMode
                             ? "bg-gray-800 border-gray-700"
@@ -1054,7 +1057,7 @@ export default function Portfolio() {
         <p>
           &copy; {new Date().getFullYear()} Ryan Mittal. All rights reserved.
         </p>
-        <p className="mt-2 text-sm">Made with React & Tailwind CSS</p>
+        <p className="mt-2 text-sm">Made with LOVE & HARDWORK </p>
       </footer>
     </div>
   );
